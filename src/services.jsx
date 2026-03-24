@@ -41,17 +41,20 @@ function Services() {
     for (let i = 0; i < services.length; i++) {
       const openness = Math.max(0, 1 - Math.abs(progress - i));
       const panel = panelRefs.current[i];
-      const dark = darkRefs.current[i];
-      const tint = tintRefs.current[i];
-      const label = labelRefs.current[i];
-      const content = contentRefs.current[i];
       if (!panel) continue;
 
-      panel.style.flex = `${1 + openness * 7}`;
-      if (dark) dark.style.opacity = `${1 - openness}`;
-      if (tint) tint.style.opacity = `${openness}`;
-      if (label) label.style.opacity = `${1 - openness}`;
-      if (content) content.style.opacity = `${openness}`;
+      // Batch all style writes together to avoid layout thrashing
+      const s = panel.style;
+      const ds = darkRefs.current[i]?.style;
+      const ts = tintRefs.current[i]?.style;
+      const ls = labelRefs.current[i]?.style;
+      const cs = contentRefs.current[i]?.style;
+
+      s.flexGrow = 1 + openness * 7;
+      if (ds) ds.opacity = 1 - openness;
+      if (ts) ts.opacity = openness;
+      if (ls) ls.opacity = 1 - openness;
+      if (cs) cs.opacity = openness;
     }
   }, []);
 
@@ -108,11 +111,13 @@ function Services() {
                   flex: isMobile ? 1 : (open ? 5 : 1),
                   backgroundColor: '#0a1628',
                   transition: isMobile ? 'none' : `flex ${d} cubic-bezier(0.4,0,0.2,1)`,
-                  willChange: isMobile ? 'flex-grow' : undefined,
+                  willChange: isMobile ? 'flex-grow, opacity' : undefined,
+                  contain: isMobile ? 'layout style' : undefined,
                 }}
                 onMouseEnter={!isMobile ? () => setHoveredIndex(i) : undefined}
               >
-                <img src={serviceImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                {!isMobile && <img src={serviceImg} alt="" className="absolute inset-0 w-full h-full object-cover" />}
+                {isMobile && <div className="absolute inset-0" style={{ backgroundImage: `url(${serviceImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />}
 
                 {/* Dark cover */}
                 <div ref={el => darkRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: isMobile ? 1 : (open ? 0 : 1), transition: isMobile ? 'none' : `opacity ${d} ease` }} />
