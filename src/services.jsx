@@ -64,7 +64,7 @@ function Services() {
 
         <div
           className={isMobile ? 'flex flex-col flex-1 overflow-hidden' : 'flex'}
-          style={!isMobile ? { height: '700px' } : {}}
+          style={!isMobile ? { height: '750px' } : {}}
           onMouseLeave={!isMobile ? () => setHoveredIndex(-1) : undefined}
         >
           {services.map((s, i) => {
