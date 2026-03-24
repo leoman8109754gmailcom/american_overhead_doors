@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import serviceImg from './assets/service img.webp';
 
 const NAV_H = 60;
@@ -13,8 +13,14 @@ const dur = (mobile) => (mobile ? '0.7s' : '0.6s');
 
 function Services() {
   const sectionRef = useRef(null);
+  const panelRefs = useRef([]);
+  const darkRefs = useRef([]);
+  const tintRefs = useRef([]);
+  const labelRefs = useRef([]);
+  const contentRefs = useRef([]);
+  const rafRef = useRef(null);
+
   const [hoveredIndex, setHoveredIndex] = useState(-1);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
   );
@@ -25,20 +31,43 @@ function Services() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
+  const updatePanels = useCallback(() => {
+    if (!sectionRef.current) return;
+    const { top } = sectionRef.current.getBoundingClientRect();
+    const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    const progress = Math.min(Math.max(0, -top) / scrollable, 1) * (services.length - 1);
+
+    for (let i = 0; i < services.length; i++) {
+      const openness = Math.max(0, 1 - Math.abs(progress - i));
+      const panel = panelRefs.current[i];
+      const dark = darkRefs.current[i];
+      const tint = tintRefs.current[i];
+      const label = labelRefs.current[i];
+      const content = contentRefs.current[i];
+      if (!panel) continue;
+
+      panel.style.flex = `${1 + openness * 7}`;
+      if (dark) dark.style.opacity = `${1 - openness}`;
+      if (tint) tint.style.opacity = `${openness}`;
+      if (label) label.style.opacity = `${1 - openness}`;
+      if (content) content.style.opacity = `${openness}`;
+    }
+  }, []);
+
   useEffect(() => {
     if (!isMobile) return;
     const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const { top } = sectionRef.current.getBoundingClientRect();
-      const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
-      if (scrollable <= 0) return;
-      const progress = Math.min(Math.max(0, -top) / scrollable, 1);
-      setScrollProgress(progress * (services.length - 1));
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(updatePanels);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
+    updatePanels();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isMobile, updatePanels]);
 
   const d = dur(isMobile);
 
@@ -67,30 +96,29 @@ function Services() {
           onMouseLeave={!isMobile ? () => setHoveredIndex(-1) : undefined}
         >
           {services.map((s, i) => {
-            const openness = isMobile
-              ? Math.max(0, 1 - Math.abs(scrollProgress - i))
-              : (hoveredIndex === i ? 1 : 0);
-            const open = openness > 0.5;
+            const open = hoveredIndex === i;
             return (
               <div
                 key={i}
+                ref={el => panelRefs.current[i] = el}
                 className={`relative overflow-hidden cursor-pointer ${
                   isMobile ? 'border-b border-gray-600 last:border-b-0' : 'border-r border-gray-600 last:border-r-0'
                 }`}
                 style={{
-                  flex: isMobile ? 1 + openness * 7 : (hoveredIndex === i ? 5 : 1),
+                  flex: isMobile ? 1 : (open ? 5 : 1),
                   backgroundColor: '#0a1628',
                   transition: isMobile ? 'none' : `flex ${d} cubic-bezier(0.4,0,0.2,1)`,
+                  willChange: isMobile ? 'flex-grow' : undefined,
                 }}
                 onMouseEnter={!isMobile ? () => setHoveredIndex(i) : undefined}
               >
                 <img src={serviceImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
 
                 {/* Dark cover */}
-                <div className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: isMobile ? 1 - openness : (open ? 0 : 1), transition: isMobile ? 'none' : `opacity ${d} ease` }} />
+                <div ref={el => darkRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: isMobile ? 1 : (open ? 0 : 1), transition: isMobile ? 'none' : `opacity ${d} ease` }} />
 
                 {/* Light tint */}
-                <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: isMobile ? openness : (open ? 1 : 0), transition: isMobile ? 'none' : `opacity ${d} ease` }} />
+                <div ref={el => tintRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: isMobile ? 0 : (open ? 1 : 0), transition: isMobile ? 'none' : `opacity ${d} ease` }} />
 
                 {/* Number */}
                 <span
@@ -110,6 +138,7 @@ function Services() {
 
                 {/* Collapsed label */}
                 <span
+                  ref={el => labelRefs.current[i] = el}
                   className="absolute z-10 pointer-events-none"
                   style={{
                     fontFamily: "'Impact','Arial Black',sans-serif",
@@ -121,7 +150,7 @@ function Services() {
                     top: '50%',
                     left: '50%',
                     transform: isMobile ? 'translate(-30%,-50%)' : 'translate(-50%,-50%) rotate(180deg)',
-                    opacity: isMobile ? 1 - openness : (open ? 0 : 1),
+                    opacity: isMobile ? 1 : (open ? 0 : 1),
                     transition: isMobile ? 'none' : 'opacity 0.3s ease',
                     whiteSpace: 'nowrap',
                   }}
@@ -131,9 +160,10 @@ function Services() {
 
                 {/* Expanded content */}
                 <div
+                  ref={el => contentRefs.current[i] = el}
                   className={`absolute inset-0 flex flex-col items-center justify-center ${isMobile ? 'px-6' : 'px-10'}`}
                   style={{
-                    opacity: isMobile ? openness : (open ? 1 : 0),
+                    opacity: isMobile ? 0 : (open ? 1 : 0),
                     transition: isMobile ? 'none' : (open ? `opacity 0.5s ease 0.2s` : 'opacity 0.3s ease'),
                   }}
                 >
