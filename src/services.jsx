@@ -75,7 +75,7 @@ function Services() {
     <section
       id="services"
       ref={sectionRef}
-      style={isMobile ? { height: `${services.length * 50}vh` } : {}}
+      style={isMobile ? { height: `${services.length * 70}vh` } : {}}
     >
       <div
         className={isMobile ? 'flex flex-col overflow-hidden' : ''}
