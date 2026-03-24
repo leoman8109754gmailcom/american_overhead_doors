@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import serviceImg from './assets/service img.webp';
 
 const NAV_H = 60;
@@ -10,36 +10,16 @@ const services = [
 ];
 
 const dur = '0.6s';
-const TOTAL = services.length;
-
-/* Build CSS keyframes for each panel's fade in/out based on scroll position */
-function buildMobileCSS() {
-  let css = '';
-  for (let i = 0; i < TOTAL; i++) {
-    const start = (i / TOTAL) * 100;
-    const peak = ((i + 0.5) / TOTAL) * 100;
-    const end = ((i + 1) / TOTAL) * 100;
-
-    css += `
-      @keyframes panel-${i} {
-        0%      { opacity: ${i === 0 ? 1 : 0}; }
-        ${Math.max(start - 1, 0)}% { opacity: 0; }
-        ${peak}% { opacity: 1; }
-        ${Math.min(end + 1, 100)}% { opacity: 0; }
-        100%    { opacity: ${i === TOTAL - 1 ? 1 : 0}; }
-      }
-      .mobile-panel-${i} {
-        animation: panel-${i} linear both;
-        animation-timeline: scroll(nearest);
-        animation-range: 0% 100%;
-      }
-    `;
-  }
-  return css;
-}
 
 function Services() {
   const sectionRef = useRef(null);
+  const panelRefs = useRef([]);
+  const darkRefs = useRef([]);
+  const tintRefs = useRef([]);
+  const labelRefs = useRef([]);
+  const contentRefs = useRef([]);
+  const rafRef = useRef(null);
+
   const [hoveredIndex, setHoveredIndex] = useState(-1);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
@@ -51,13 +31,48 @@ function Services() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  /* ── MOBILE ── pure CSS scroll-driven animation, no JS on scroll ── */
+  const updatePanels = useCallback(() => {
+    if (!sectionRef.current) return;
+    const { top } = sectionRef.current.getBoundingClientRect();
+    const scrollable = sectionRef.current.offsetHeight - window.innerHeight;
+    if (scrollable <= 0) return;
+    const progress = Math.min(Math.max(0, -top) / scrollable, 1) * (services.length - 1);
+
+    for (let i = 0; i < services.length; i++) {
+      const openness = Math.max(0, 1 - Math.abs(progress - i));
+      const panel = panelRefs.current[i];
+      if (!panel) continue;
+
+      panel.style.flexGrow = 1 + openness * 7;
+      if (darkRefs.current[i]) darkRefs.current[i].style.opacity = 1 - openness;
+      if (tintRefs.current[i]) tintRefs.current[i].style.opacity = openness;
+      if (labelRefs.current[i]) labelRefs.current[i].style.opacity = 1 - openness;
+      if (contentRefs.current[i]) contentRefs.current[i].style.opacity = openness;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const handleScroll = () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(updatePanels);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updatePanels();
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [isMobile, updatePanels]);
+
+  /* ── MOBILE ── */
   if (isMobile) {
     return (
-      <section id="services" ref={sectionRef}>
-        <style>{buildMobileCSS()}</style>
-
-        {/* Scrollable container that drives the animation timeline */}
+      <section
+        id="services"
+        ref={sectionRef}
+        style={{ height: `${services.length * 80}vh` }}
+      >
         <div
           style={{
             position: 'sticky',
@@ -75,68 +90,82 @@ function Services() {
             </h2>
           </div>
 
-          {/* Scroll driver — this hidden scrollable div powers the animation */}
-          <div
-            className="relative"
-            style={{
-              height: 'calc(100% - 60px)',
-              overflowY: 'scroll',
-              scrollbarWidth: 'none',
-              WebkitOverflowScrolling: 'touch',
-            }}
-          >
-            {/* Spacer to create scroll distance */}
-            <div style={{ height: `${TOTAL * 100}%`, position: 'relative' }}>
-              {/* Stacked panels pinned to viewport */}
-              <div className="sticky top-0" style={{ height: `calc(100vh - ${NAV_H + 60}px)` }}>
-                {services.map((s, i) => (
-                  <div
-                    key={i}
-                    className={`absolute inset-0 mobile-panel-${i}`}
-                    style={{ willChange: 'opacity' }}
+          <div className="flex flex-col flex-1 overflow-hidden" style={{ height: 'calc(100% - 60px)' }}>
+            {services.map((s, i) => (
+              <div
+                key={i}
+                ref={el => panelRefs.current[i] = el}
+                className="relative overflow-hidden border-b border-gray-600 last:border-b-0"
+                style={{
+                  flex: i === 0 ? 8 : 1,
+                  backgroundColor: '#0a1628',
+                  transition: 'flex-grow 60ms linear, opacity 60ms linear',
+                }}
+              >
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `url(${serviceImg})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                />
+                <div ref={el => darkRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: i === 0 ? 0 : 1 }} />
+                <div ref={el => tintRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: i === 0 ? 1 : 0 }} />
+
+                <span
+                  className="absolute z-10"
+                  style={{
+                    fontFamily: "'Karantina', cursive",
+                    fontSize: '1.2rem',
+                    fontStyle: 'italic',
+                    color: '#c1272d',
+                    top: '50%',
+                    left: '0.5rem',
+                    transform: 'translateY(-50%)',
+                  }}
+                >
+                  {s.number}
+                </span>
+
+                <span
+                  ref={el => labelRefs.current[i] = el}
+                  className="absolute z-10 pointer-events-none"
+                  style={{
+                    fontFamily: "'Impact','Arial Black',sans-serif",
+                    fontSize: '0.85rem',
+                    letterSpacing: '0.15em',
+                    color: '#fff',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-30%,-50%)',
+                    opacity: i === 0 ? 0 : 1,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {s.title}
+                </span>
+
+                <div
+                  ref={el => contentRefs.current[i] = el}
+                  className="absolute inset-0 flex flex-col items-center justify-center px-6"
+                  style={{ opacity: i === 0 ? 1 : 0 }}
+                >
+                  <h3
+                    className="font-black tracking-wider text-2xl mb-4"
+                    style={{ fontFamily: "'Alexandria', sans-serif", color: '#0a1628' }}
                   >
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        backgroundImage: `url(${serviceImg})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                      }}
-                    />
-                    <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)' }} />
-
-                    <span
-                      className="absolute z-10"
-                      style={{
-                        fontFamily: "'Karantina', cursive",
-                        fontSize: '1.5rem',
-                        fontStyle: 'italic',
-                        color: '#c1272d',
-                        top: '1rem',
-                        left: '1rem',
-                      }}
-                    >
-                      {s.number}
-                    </span>
-
-                    <div className="absolute inset-0 flex flex-col items-center justify-center px-6">
-                      <h3
-                        className="font-black tracking-wider text-2xl mb-4"
-                        style={{ fontFamily: "'Alexandria', sans-serif", color: '#0a1628' }}
-                      >
-                        {s.title}
-                      </h3>
-                      <p
-                        className="text-center leading-relaxed italic max-w-md text-sm"
-                        style={{ color: '#1a2a40', fontFamily: "'Alexandria', sans-serif" }}
-                      >
-                        {s.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                    {s.title}
+                  </h3>
+                  <p
+                    className="text-center leading-relaxed italic max-w-md text-sm"
+                    style={{ color: '#1a2a40', fontFamily: "'Alexandria', sans-serif" }}
+                  >
+                    {s.description}
+                  </p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
