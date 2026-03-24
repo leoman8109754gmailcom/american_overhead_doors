@@ -50,8 +50,8 @@ function Services() {
       style={isMobile ? { height: `${services.length * 100}vh` } : {}}
     >
       <div
-        className={isMobile ? `sticky top-[${NAV_H}px] flex flex-col overflow-hidden` : ''}
-        style={isMobile ? { height: `calc(100vh - ${NAV_H}px)` } : {}}
+        className={isMobile ? 'flex flex-col overflow-hidden' : ''}
+        style={isMobile ? { position: 'sticky', top: `${NAV_H}px`, height: `calc(100vh - ${NAV_H}px)` } : {}}
       >
         <div className={isMobile ? 'text-center pt-4 pb-2 bg-white' : 'text-right pr-12 pt-8 pb-4'}>
           <h2
