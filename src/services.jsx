@@ -71,7 +71,7 @@ function Services() {
       <section
         id="services"
         ref={sectionRef}
-        style={{ height: `${services.length * 80}vh` }}
+        style={{ height: `${services.length * 60}vh` }}
       >
         <div
           style={{
