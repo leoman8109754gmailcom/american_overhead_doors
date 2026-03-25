@@ -68,7 +68,7 @@ export default function Gallery({ galleries = [] }) {
 
   const imgStyle = {
     width: '100%',
-    height: '220px',
+    height: '320px',
     borderRadius: '0.375rem',
     objectFit: 'fill',
     display: 'block',
@@ -79,14 +79,15 @@ export default function Gallery({ galleries = [] }) {
       id="gallery"
       style={{
         backgroundColor: '#FFFFFF',
-        padding: '3rem 1.5rem',
-        maxWidth: '960px',
+        paddingTop: '3rem',
+        paddingBottom: '3rem',
+        maxWidth: '92vw',
         margin: '0 auto',
         width: '100%',
         boxSizing: 'border-box',
       }}
     >
-      {/* Heading */}
+      {/* Heading — full-width, left edge */}
       <h2
         style={{
           fontFamily: 'Karantina, cursive',
@@ -95,13 +96,14 @@ export default function Gallery({ galleries = [] }) {
           fontSize: 'clamp(2rem, 5vw, 3rem)',
           textTransform: 'uppercase',
           marginBottom: '1.5rem',
+          padding: '0 3rem',
         }}
       >
         Check Out Our Work
       </h2>
 
       {/* Grid + animation wrapper */}
-      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.5rem' }}>
+      <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.5rem', padding: '0 3rem' }}>
         {/* Image grid — two columns on desktop, single column on mobile */}
         <div className="gallery-grid">
           {/* Left column */}
@@ -176,6 +178,7 @@ export default function Gallery({ galleries = [] }) {
             alignItems: 'center',
             gap: '0.75rem',
             marginTop: '1.25rem',
+            padding: '0 3rem',
           }}
         >
           <span

@@ -4,6 +4,8 @@ import Hero from './hero'
 import AboutUs from './aboutus'
 import Services from './services'
 import Gallery from './gallery'
+import Reviews from './reviews'
+import Footer from './footer'
 import { client, urlFor } from './sanityClient'
 
 const GALLERY_QUERY = `*[_type == "gallery"] | order(order asc) {
@@ -17,8 +19,15 @@ const GALLERY_QUERY = `*[_type == "gallery"] | order(order asc) {
   }
 }`;
 
+const REVIEW_QUERY = `*[_type == "review"] | order(order asc) {
+  _id,
+  reviewText,
+  reviewerName
+}`;
+
 function App() {
   const [galleries, setGalleries] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     client.fetch(GALLERY_QUERY).then((data) => {
@@ -32,6 +41,16 @@ function App() {
       }));
       setGalleries(processed);
     }).catch((err) => console.error('Sanity fetch error:', err));
+
+    client.fetch(REVIEW_QUERY).then((data) => {
+      console.log('Sanity reviews:', data);
+      setReviews(
+        data.map((r) => ({
+          text: r.reviewText,
+          name: r.reviewerName,
+        }))
+      );
+    }).catch((err) => console.error('Sanity review fetch error:', err));
   }, []);
 
   return (
@@ -41,6 +60,8 @@ function App() {
       <AboutUs />
       <Services />
       <Gallery galleries={galleries} />
+      <Reviews reviews={reviews} />
+      <Footer />
     </div>
   )
 }

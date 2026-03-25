@@ -57,10 +57,12 @@ html, body {
 @media (max-width: 640px) {
   .gallery-grid {
     grid-template-columns: 1fr;
+    gap: 0.4rem;
   }
 
   .gallery-img {
-    height: calc((100vh - 14rem) / 4);
+    height: auto !important;
+    aspect-ratio: 16 / 9;
   }
 }
 
@@ -116,4 +118,30 @@ html, body {
 
 .gallery-curtain-out-reverse {
   animation: curtainOutReverse 0.4s ease-out forwards;
+}
+
+/* ── Reviews responsive ── */
+.reviews-mobile {
+  display: none !important;
+}
+
+.reviews-title {
+  text-align: right;
+  padding: 0 3rem;
+}
+
+@media (max-width: 640px) {
+  .reviews-desktop {
+    display: none !important;
+  }
+  .reviews-mobile {
+    display: block !important;
+  }
+  .reviews-mobile .review-card {
+    min-height: 40vh;
+  }
+  .reviews-title {
+    text-align: left;
+    padding: 0 1.5rem;
+  }
 }
