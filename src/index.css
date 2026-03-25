@@ -120,6 +120,19 @@ html, body {
   animation: curtainOutReverse 0.4s ease-out forwards;
 }
 
+/* ── Footer responsive ── */
+@media (max-width: 640px) {
+  .site-footer {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1.5rem 1rem !important;
+  }
+  .footer-contact {
+    text-align: center !important;
+  }
+}
+
 /* ── Reviews responsive ── */
 .reviews-mobile {
   display: none !important;

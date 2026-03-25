@@ -3,13 +3,13 @@ import logo from './assets/Logo 3.svg';
 export default function Footer() {
   return (
     <footer
+      className="site-footer"
       style={{
         backgroundColor: '#CDB895',
         padding: '1.25rem 2rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
         gap: '1rem',
       }}
     >
@@ -49,7 +49,7 @@ export default function Footer() {
       </div>
 
       {/* Contact + CMS link */}
-      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+      <div className="footer-contact" style={{ textAlign: 'right', flexShrink: 0 }}>
         <p
           style={{
             fontFamily: 'Alexandria, sans-serif',
