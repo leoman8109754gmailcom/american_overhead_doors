@@ -154,7 +154,55 @@ html, body {
     min-height: 40vh;
   }
   .reviews-title {
-    text-align: left;
+    text-align: right;
     padding: 0 1.5rem;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
   }
+  .gallery-title {
+    padding: 0 1.5rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .gallery-section {
+    padding-top: 1rem !important;
+  }
+  .reviews-section {
+    padding-top: 1rem !important;
+  }
+  .services-title-wrap {
+    text-align: right !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* ── Review slide animations ── */
+@keyframes reviewSlideOutLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+@keyframes reviewSlideOutRight {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+@keyframes reviewSlideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes reviewSlideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+.review-slide-out-left {
+  animation: reviewSlideOutLeft 0.35s ease forwards;
+}
+.review-slide-out-right {
+  animation: reviewSlideOutRight 0.35s ease forwards;
+}
+.review-slide-in-right {
+  animation: reviewSlideInRight 0.35s ease forwards;
+}
+.review-slide-in-left {
+  animation: reviewSlideInLeft 0.35s ease forwards;
 }

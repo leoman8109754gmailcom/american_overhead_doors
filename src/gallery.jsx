@@ -77,6 +77,7 @@ export default function Gallery({ galleries = [] }) {
   return (
     <section
       id="gallery"
+      className="gallery-section"
       style={{
         backgroundColor: '#FFFFFF',
         paddingTop: '3rem',
@@ -89,6 +90,7 @@ export default function Gallery({ galleries = [] }) {
     >
       {/* Heading — full-width, left edge */}
       <h2
+        className="gallery-title"
         style={{
           fontFamily: 'Karantina, cursive',
           color: '#0D2C40',

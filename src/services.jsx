@@ -71,7 +71,7 @@ function Services() {
       <section
         id="services"
         ref={sectionRef}
-        style={{ height: `${services.length * 60}vh` }}
+        style={{ height: `${services.length * 50}vh`, marginTop: '-1px', backgroundColor: '#C9A87C' }}
       >
         <div
           style={{
@@ -81,7 +81,7 @@ function Services() {
             overflow: 'hidden',
           }}
         >
-          <div className="text-center pt-4 pb-2 bg-white relative z-20">
+          <div className="text-center pt-4 pb-2 bg-white relative z-20 services-title-wrap">
             <h2
               className="font-black tracking-wider text-4xl"
               style={{ fontFamily: "'Karantina', cursive", color: '#0a1628' }}
