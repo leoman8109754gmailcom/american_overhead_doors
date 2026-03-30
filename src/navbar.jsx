@@ -78,6 +78,7 @@ export default function Navbar() {
               display: 'inline-block',
               transform: hovered ? 'scale(1.1)' : 'scale(1)',
               opacity: clicked ? 0.6 : 1,
+              margin: scrolled ? '0' : '0.5rem 0',
               transition: 'transform 0.15s ease, opacity 0.1s ease, padding 0.3s ease, font-size 0.3s ease',
             }}
           >
@@ -104,7 +105,7 @@ export default function Navbar() {
         <div className={menuClosing ? 'mobile-menu-closing' : 'mobile-menu'} style={{ position: 'absolute', left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '1.5rem 2rem', backgroundColor: 'rgba(201, 168, 124, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '0 0 1.5rem 1.5rem', overflow: 'hidden', zIndex: 999 }}>
           <a href="#about" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>About Us</a>
           <a href="#services" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Services</a>
-          <a href="#work" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Our Work</a>
+          <a href="#gallery" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Our Work</a>
           <a
             href="#contact"
             onClick={closeMenu}
