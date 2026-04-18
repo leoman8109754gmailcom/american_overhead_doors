@@ -86,11 +86,11 @@ html, body {
 }
 
 .gallery-curtain-in {
-  animation: curtainIn 0.4s ease-in forwards;
+  animation: curtainIn 0.4s ease-in both;
 }
 
 .gallery-curtain-out {
-  animation: curtainOut 0.4s ease-out forwards;
+  animation: curtainOut 0.4s ease-out both;
 }
 
 /* Reverse direction (going back) */
@@ -113,11 +113,11 @@ html, body {
 }
 
 .gallery-curtain-in-reverse {
-  animation: curtainInReverse 0.4s ease-in forwards;
+  animation: curtainInReverse 0.4s ease-in both;
 }
 
 .gallery-curtain-out-reverse {
-  animation: curtainOutReverse 0.4s ease-out forwards;
+  animation: curtainOutReverse 0.4s ease-out both;
 }
 
 /* ── Footer responsive ── */
@@ -195,14 +195,14 @@ html, body {
 }
 
 .review-slide-out-left {
-  animation: reviewSlideOutLeft 0.35s ease forwards;
+  animation: reviewSlideOutLeft 0.4s ease both;
 }
 .review-slide-out-right {
-  animation: reviewSlideOutRight 0.35s ease forwards;
+  animation: reviewSlideOutRight 0.4s ease both;
 }
 .review-slide-in-right {
-  animation: reviewSlideInRight 0.35s ease forwards;
+  animation: reviewSlideInRight 0.4s ease both;
 }
 .review-slide-in-left {
-  animation: reviewSlideInLeft 0.35s ease forwards;
+  animation: reviewSlideInLeft 0.4s ease both;
 }

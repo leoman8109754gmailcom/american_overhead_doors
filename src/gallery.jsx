@@ -110,7 +110,9 @@ export default function Gallery({ galleries = [] }) {
         <div className="gallery-grid">
           {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignSelf: 'start' }}>
-            {left.map((img, i) => (
+            {left.map((img, i) => {
+              const overallIndex = i * 2;
+              return (
               <div key={`${page}-l-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
                 <img
                   src={img.src}
@@ -132,16 +134,20 @@ export default function Gallery({ galleries = [] }) {
                       inset: 0,
                       backgroundColor: '#FFFFFF',
                       zIndex: 10,
+                      animationDelay: `${overallIndex * 0.08}s`,
                     }}
                   />
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Right column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignSelf: 'start' }}>
-            {right.map((img, i) => (
+            {right.map((img, i) => {
+              const overallIndex = i * 2 + 1;
+              return (
               <div key={`${page}-r-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
                 <img
                   src={img.src}
@@ -163,11 +169,13 @@ export default function Gallery({ galleries = [] }) {
                       inset: 0,
                       backgroundColor: '#FFFFFF',
                       zIndex: 10,
+                      animationDelay: `${overallIndex * 0.08}s`,
                     }}
                   />
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

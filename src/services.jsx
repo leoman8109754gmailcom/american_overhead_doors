@@ -20,7 +20,7 @@ function Services() {
   const contentRefs = useRef([]);
   const rafRef = useRef(null);
 
-  const [hoveredIndex, setHoveredIndex] = useState(-1);
+  const [hoveredIndex, setHoveredIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < 768 : false
   );
