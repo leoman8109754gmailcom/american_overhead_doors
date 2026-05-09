@@ -15,7 +15,7 @@ export default function Hero({ heroData }) {
   const headline = heroData?.headline ?? 'American Overhead Doors';
   const bodyText = heroData?.bodyText ?? '';
   const ctaText = heroData?.ctaText ?? 'Services';
-  const imgSrc = heroData?.image
+  const imgSrc = heroData?.image?.asset
     ? urlFor(heroData.image).auto('format').width(900).url()
     : null;
   const imgAlt = heroData?.image?.alt ?? 'American Overhead Doors';

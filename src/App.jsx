@@ -56,10 +56,12 @@ function App() {
     }).catch(console.error)
 
     client.fetch(GALLERY_QUERY).then((data) => {
-      const images = (data?.images ?? []).map((img) => ({
-        src: urlFor(img).auto('format').width(800).url(),
-        alt: img.alt ?? '',
-      }))
+      const images = (data?.images ?? [])
+        .filter((img) => img?.asset)
+        .map((img) => ({
+          src: urlFor(img).auto('format').width(800).url(),
+          alt: img.alt ?? '',
+        }))
       setGalleryImages(images)
     }).catch(console.error)
 

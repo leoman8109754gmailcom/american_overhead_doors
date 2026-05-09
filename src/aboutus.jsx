@@ -12,7 +12,7 @@ export default function AboutUs({ aboutData }) {
 
   const subheading = aboutData?.subheading ?? '';
   const bodyText = aboutData?.bodyText ?? '';
-  const imgSrc = aboutData?.image
+  const imgSrc = aboutData?.image?.asset
     ? urlFor(aboutData.image).auto('format').width(800).url()
     : null;
   const imgAlt = aboutData?.image?.alt ?? '45 Years in Business';

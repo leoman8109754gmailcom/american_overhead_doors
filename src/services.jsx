@@ -87,7 +87,7 @@ function Services({ services = [] }) {
 
           <div className="flex flex-col flex-1 overflow-hidden" style={{ height: 'calc(100% - 60px)' }}>
             {services.map((s, i) => {
-              const imgSrc = s.image ? urlFor(s.image).auto('format').width(800).url() : null;
+              const imgSrc = s.image?.asset ? urlFor(s.image).auto('format').width(800).url() : null;
               return (
                 <div
                   key={i}
@@ -191,7 +191,7 @@ function Services({ services = [] }) {
       >
         {services.map((s, i) => {
           const open = hoveredIndex === i;
-          const imgSrc = s.image ? urlFor(s.image).auto('format').width(900).url() : null;
+          const imgSrc = s.image?.asset ? urlFor(s.image).auto('format').width(900).url() : null;
           return (
             <div
               key={i}
