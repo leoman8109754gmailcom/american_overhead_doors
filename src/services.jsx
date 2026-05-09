@@ -22,11 +22,11 @@ function Services() {
 
   const [hoveredIndex, setHoveredIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth < 1024 : false
+    typeof window !== 'undefined' ? window.innerWidth < 1280 : false
   );
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
+    const check = () => setIsMobile(window.innerWidth < 1280);
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);

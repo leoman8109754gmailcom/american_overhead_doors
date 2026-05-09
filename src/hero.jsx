@@ -2,12 +2,12 @@ import heroImg from './assets/hero_img.webp';
 import { useState, useEffect } from 'react';
 
 export default function Hero() {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
