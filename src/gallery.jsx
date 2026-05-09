@@ -72,8 +72,8 @@ export default function Gallery({ images = [] }) {
                   style={imgStyle}
                 />
               </div>
-              );
-            })}
+              )
+            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignSelf: 'start' }}>
@@ -87,8 +87,8 @@ export default function Gallery({ images = [] }) {
                   style={imgStyle}
                 />
               </div>
-              );
-            })}
+              )
+            )}
           </div>
         </div>
       </div>
