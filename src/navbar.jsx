@@ -1,6 +1,29 @@
 import logo from './assets/Logo 3.svg';
 import { useState, useEffect } from 'react';
 
+function smoothScrollTo(targetId, duration = 2200) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const start = window.scrollY;
+  const end = target.getBoundingClientRect().top + window.scrollY;
+  const distance = end - start;
+  let startTime = null;
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    window.scrollTo(0, start + distance * easeInOut(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
 export default function Navbar() {
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -51,9 +74,9 @@ export default function Navbar() {
         {/* Desktop Links */}
         {!isMobile && (
           <div style={{ display: 'flex', gap: '4rem', alignItems: 'center' }}>
-            <a href="#about" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em' }}>About Us</a>
-            <a href="#services" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Services</a>
-            <a href="#work" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Our Work</a>
+            <a onClick={e => { e.preventDefault(); smoothScrollTo('about'); }} href="#about" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em', cursor: 'pointer' }}>About Us</a>
+            <a onClick={e => { e.preventDefault(); smoothScrollTo('services'); }} href="#services" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em', cursor: 'pointer' }}>Services</a>
+            <a onClick={e => { e.preventDefault(); smoothScrollTo('gallery'); }} href="#gallery" style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.125rem', textDecoration: 'none', letterSpacing: '0.05em', cursor: 'pointer' }}>Our Work</a>
           </div>
         )}
 
@@ -103,9 +126,9 @@ export default function Navbar() {
       {/* Mobile Dropdown */}
       {isMobile && menuOpen && (
         <div className={menuClosing ? 'mobile-menu-closing' : 'mobile-menu'} style={{ position: 'absolute', left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', padding: '1.5rem 2rem', backgroundColor: 'rgba(201, 168, 124, 0.8)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '0 0 1.5rem 1.5rem', overflow: 'hidden', zIndex: 999 }}>
-          <a href="#about" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>About Us</a>
-          <a href="#services" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Services</a>
-          <a href="#gallery" onClick={closeMenu} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Our Work</a>
+          <a href="#about" onClick={() => { smoothScrollTo('about'); closeMenu(); }} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>About Us</a>
+          <a href="#services" onClick={() => { smoothScrollTo('services'); closeMenu(); }} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Services</a>
+          <a href="#gallery" onClick={() => { smoothScrollTo('gallery'); closeMenu(); }} style={{ color: '#002F49', fontFamily: 'Alexandria, sans-serif', fontWeight: 'bold', fontSize: '1.25rem', textDecoration: 'none', letterSpacing: '0.05em' }}>Our Work</a>
           <a
             href="#contact"
             onClick={closeMenu}
