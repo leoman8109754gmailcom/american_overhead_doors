@@ -97,8 +97,8 @@ export default function Gallery({ galleries = [] }) {
           fontWeight: 'bold',
           fontSize: 'clamp(2rem, 5vw, 3rem)',
           textTransform: 'uppercase',
-          marginBottom: '1.5rem',
-          padding: '0 3rem',
+          marginBottom: '1rem',
+          flexShrink: 0,
         }}
       >
         Check Out Our Work
@@ -134,7 +134,6 @@ export default function Gallery({ galleries = [] }) {
                       inset: 0,
                       backgroundColor: '#FFFFFF',
                       zIndex: 10,
-                      animationDelay: `${overallIndex * 0.08}s`,
                     }}
                   />
                 )}
@@ -188,7 +187,6 @@ export default function Gallery({ galleries = [] }) {
             alignItems: 'center',
             gap: '0.75rem',
             marginTop: '1.25rem',
-            padding: '0 3rem',
           }}
         >
           <span
