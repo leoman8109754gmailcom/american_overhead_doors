@@ -52,8 +52,8 @@ export default function Gallery({ images = [] }) {
           fontWeight: 'bold',
           fontSize: 'clamp(2rem, 5vw, 3rem)',
           textTransform: 'uppercase',
-          marginBottom: '1.5rem',
-          padding: '0 3rem',
+          marginBottom: '1rem',
+          flexShrink: 0,
         }}
       >
         Check Out Our Work
@@ -71,6 +71,22 @@ export default function Gallery({ images = [] }) {
                   className="gallery-img"
                   style={imgStyle}
                 />
+                {animState !== 'idle' && (
+                  <div
+                    className={
+                      animState === 'cover'
+                        ? (direction.current === 'forward' ? 'gallery-curtain-in' : 'gallery-curtain-in-reverse')
+                        : (direction.current === 'forward' ? 'gallery-curtain-out' : 'gallery-curtain-out-reverse')
+                    }
+                    onAnimationEnd={animState === 'cover' ? handleSingleCoverDone : handleSingleRevealDone}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      backgroundColor: '#FFFFFF',
+                      zIndex: 10,
+                    }}
+                  />
+                )}
               </div>
               )
             )}
@@ -92,6 +108,66 @@ export default function Gallery({ images = [] }) {
           </div>
         </div>
       </div>
+
+      {/* Pagination controls */}
+      {(
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            marginTop: '1.25rem',
+          }}
+        >
+          <span
+            style={{
+              fontFamily: 'Karantina, cursive',
+              fontWeight: 'bold',
+              fontSize: '1.75rem',
+              color: '#0D2C40',
+              minWidth: '1.5rem',
+            }}
+          >
+            {page + 1}
+          </span>
+
+          <button
+            onClick={() => goToPage(page - 1)}
+            disabled={page === 0 || animState !== 'idle'}
+            aria-label="Previous page"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: page === 0 ? 'default' : 'pointer',
+              opacity: page === 0 ? 0.35 : 1,
+              fontSize: '1.5rem',
+              padding: '0.25rem 0.5rem',
+              color: '#0D2C40',
+              transition: 'opacity 0.2s',
+            }}
+          >
+            &#8592;
+          </button>
+
+          <button
+            onClick={() => goToPage(page + 1)}
+            disabled={page === totalPages - 1 || animState !== 'idle'}
+            aria-label="Next page"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: page === totalPages - 1 ? 'default' : 'pointer',
+              opacity: page === totalPages - 1 ? 0.35 : 1,
+              fontSize: '1.5rem',
+              padding: '0.25rem 0.5rem',
+              color: '#0D2C40',
+              transition: 'opacity 0.2s',
+            }}
+          >
+            &#8594;
+          </button>
+        </div>
+      )}
     </section>
   );
 }
