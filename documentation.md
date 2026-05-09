@@ -23,3 +23,24 @@ Worked on the Services section of the website.
 5. Added vertical service name labels on collapsed panels (desktop) and horizontal labels on mobile
 6. Added borders between panels to make them visually distinct
 7. Changed fonts: SERVICES title uses Karantina, service numbers use Karantina, and the content title/description inside each panel uses Alexandria
+
+Date 5/8/2026
+Fixed iPad layout and improved gallery and reviews across all screen sizes.
+1. iPad layout fixes - Hero, About Us, Gallery, and Reviews show desktop layout on tablets (768px+). Services uses the mobile scroll-panel animation on tablets and below (1280px) since hover does not work on touchscreens
+2. Gallery viewport fit - gallery section fills exactly 100vh with flexbox so the heading, images, and controls are all visible on screen without scrolling. Flat CSS grid with 1fr 1fr columns and 1fr 1fr rows keeps all 4 images equal-sized and contained
+3. Gallery stagger animation - each image curtain has an animationDelay of 0s, 0.1s, 0.2s, 0.3s for a smooth left-to-right top-to-bottom wipe effect on page transitions
+4. Mobile gallery - on 767px and below the grid switches to a single column with repeat(4, 1fr) rows so all 4 images stack vertically within 100vh. Padding reduced to 0.75rem on mobile. Desktop and tablet use object-fit: fill, mobile uses object-fit: cover
+5. Review slide animation - added a 5% gap between outgoing and incoming cards by sliding at 105% with a 0.05s delay on the incoming card so pages no longer visually stick together
+
+Date 4/17/2026
+Worked On Animations for The Website
+1. Edited the Services Animation so that the component would already load in with one service displaying
+2. Edited the gallery component so that the animaiton would stagger in diffrent orders making the animation seem "cleaner"
+3. pushed to github
+
+Date 4/20/2026
+Worked on Mobile, Tablet and, Desktop optimization
+1. made every component to a mobile version when looking at the website from a iPad or tablet 
+2. fixed the animatinos so that they were more suitable for mobile users (might need to continue tweaking that)
+3. tried to make the gallery animation fit the entire screen since about   1/8 of it cuts out of screen on every device but was unsuccesfull will try again later
+
