@@ -1,9 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-/**
- * Distributes images into two columns, alternating assignment so both
- * columns stay roughly balanced regardless of how many images are added.
- */
 function distributeToColumns(images) {
   const left = [];
   const right = [];
@@ -14,57 +10,15 @@ function distributeToColumns(images) {
   return { left, right };
 }
 
-export default function Gallery({ galleries = [] }) {
-  const [page, setPage] = useState(0);
-  const [animState, setAnimState] = useState('idle'); // idle | cover | reveal
-  const pendingPage = useRef(null);
-  const direction = useRef('forward'); // 'forward' | 'back'
-  const coveredCount = useRef(0);
-  const revealedCount = useRef(0);
-  const totalPages = Math.max(1, galleries.length);
+export default function Gallery({ images = [] }) {
+  const [animState, setAnimState] = useState('idle');
 
-  // Reset page when galleries change
+  // Reset animation state when images change
   useEffect(() => {
-    setPage(0);
     setAnimState('idle');
-  }, [galleries.length]);
+  }, [images.length]);
 
-  // Total images currently showing (needed to know when all curtains finish)
-  const currentImages = galleries[page]?.images || [];
-  const imageCount = currentImages.length;
-
-  const goToPage = useCallback(
-    (nextPage) => {
-      if (animState !== 'idle') return;
-      if (nextPage < 0 || nextPage >= totalPages) return;
-
-      pendingPage.current = nextPage;
-      direction.current = nextPage > page ? 'forward' : 'back';
-      coveredCount.current = 0;
-      revealedCount.current = 0;
-      setAnimState('cover');
-    },
-    [animState, totalPages],
-  );
-
-  const handleSingleCoverDone = () => {
-    coveredCount.current += 1;
-    if (coveredCount.current >= imageCount) {
-      setPage(pendingPage.current);
-      setAnimState('reveal');
-    }
-  };
-
-  const handleSingleRevealDone = () => {
-    revealedCount.current += 1;
-    // Use next gallery's image count for reveal
-    const nextCount = galleries[pendingPage.current]?.images?.length || 0;
-    if (revealedCount.current >= nextCount) {
-      setAnimState('idle');
-    }
-  };
-
-  const { left, right } = distributeToColumns(currentImages);
+  const { left, right } = distributeToColumns(images);
 
   const imgStyle = {
     width: '100%',
@@ -73,6 +27,8 @@ export default function Gallery({ galleries = [] }) {
     objectFit: 'fill',
     display: 'block',
   };
+
+  if (images.length === 0) return null;
 
   return (
     <section
@@ -88,7 +44,6 @@ export default function Gallery({ galleries = [] }) {
         boxSizing: 'border-box',
       }}
     >
-      {/* Heading — full-width, left edge */}
       <h2
         className="gallery-title"
         style={{
@@ -104,16 +59,11 @@ export default function Gallery({ galleries = [] }) {
         Check Out Our Work
       </h2>
 
-      {/* Grid + animation wrapper */}
       <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.5rem', padding: '0 3rem' }}>
-        {/* Image grid — two columns on desktop, single column on mobile */}
         <div className="gallery-grid">
-          {/* Left column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignSelf: 'start' }}>
-            {left.map((img, i) => {
-              const overallIndex = i * 2;
-              return (
-              <div key={`${page}-l-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
+            {left.map((img, i) => (
+              <div key={`l-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
                 <img
                   src={img.src}
                   alt={img.alt || ''}
@@ -121,34 +71,14 @@ export default function Gallery({ galleries = [] }) {
                   className="gallery-img"
                   style={imgStyle}
                 />
-                {animState !== 'idle' && (
-                  <div
-                    className={
-                      animState === 'cover'
-                        ? (direction.current === 'forward' ? 'gallery-curtain-in' : 'gallery-curtain-in-reverse')
-                        : (direction.current === 'forward' ? 'gallery-curtain-out' : 'gallery-curtain-out-reverse')
-                    }
-                    onAnimationEnd={animState === 'cover' ? handleSingleCoverDone : handleSingleRevealDone}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      backgroundColor: '#FFFFFF',
-                      zIndex: 10,
-                      animationDelay: `${overallIndex * 0.08}s`,
-                    }}
-                  />
-                )}
               </div>
               );
             })}
           </div>
 
-          {/* Right column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignSelf: 'start' }}>
-            {right.map((img, i) => {
-              const overallIndex = i * 2 + 1;
-              return (
-              <div key={`${page}-r-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
+            {right.map((img, i) => (
+              <div key={`r-${i}`} style={{ position: 'relative', overflow: 'hidden', borderRadius: '0.375rem' }}>
                 <img
                   src={img.src}
                   alt={img.alt || ''}
@@ -156,90 +86,12 @@ export default function Gallery({ galleries = [] }) {
                   className="gallery-img"
                   style={imgStyle}
                 />
-                {animState !== 'idle' && (
-                  <div
-                    className={
-                      animState === 'cover'
-                        ? (direction.current === 'forward' ? 'gallery-curtain-in' : 'gallery-curtain-in-reverse')
-                        : (direction.current === 'forward' ? 'gallery-curtain-out' : 'gallery-curtain-out-reverse')
-                    }
-                    onAnimationEnd={animState === 'cover' ? handleSingleCoverDone : handleSingleRevealDone}
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      backgroundColor: '#FFFFFF',
-                      zIndex: 10,
-                      animationDelay: `${overallIndex * 0.08}s`,
-                    }}
-                  />
-                )}
               </div>
               );
             })}
           </div>
         </div>
       </div>
-
-      {/* Pagination controls */}
-      {(
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            marginTop: '1.25rem',
-            padding: '0 3rem',
-          }}
-        >
-          <span
-            style={{
-              fontFamily: 'Karantina, cursive',
-              fontWeight: 'bold',
-              fontSize: '1.75rem',
-              color: '#0D2C40',
-              minWidth: '1.5rem',
-            }}
-          >
-            {page + 1}
-          </span>
-
-          <button
-            onClick={() => goToPage(page - 1)}
-            disabled={page === 0 || animState !== 'idle'}
-            aria-label="Previous page"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: page === 0 ? 'default' : 'pointer',
-              opacity: page === 0 ? 0.35 : 1,
-              fontSize: '1.5rem',
-              padding: '0.25rem 0.5rem',
-              color: '#0D2C40',
-              transition: 'opacity 0.2s',
-            }}
-          >
-            &#8592;
-          </button>
-
-          <button
-            onClick={() => goToPage(page + 1)}
-            disabled={page === totalPages - 1 || animState !== 'idle'}
-            aria-label="Next page"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: page === totalPages - 1 ? 'default' : 'pointer',
-              opacity: page === totalPages - 1 ? 0.35 : 1,
-              fontSize: '1.5rem',
-              padding: '0.25rem 0.5rem',
-              color: '#0D2C40',
-              transition: 'opacity 0.2s',
-            }}
-          >
-            &#8594;
-          </button>
-        </div>
-      )}
     </section>
   );
 }

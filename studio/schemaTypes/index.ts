@@ -1,5 +1,7 @@
-import {galleryImage} from './galleryImage'
-import {gallery} from './gallery'
+import {hero} from './hero'
+import {aboutUs} from './aboutUs'
+import {siteServices} from './siteServices'
+import {siteGallery} from './siteGallery'
 import {review} from './review'
 
-export const schemaTypes = [galleryImage, gallery, review]
+export const schemaTypes = [hero, aboutUs, siteServices, siteGallery, review]

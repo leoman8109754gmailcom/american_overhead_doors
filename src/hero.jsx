@@ -1,7 +1,7 @@
-import heroImg from './assets/hero_img.webp';
 import { useState, useEffect } from 'react';
+import { urlFor } from './sanityClient';
 
-export default function Hero() {
+export default function Hero({ heroData }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -12,17 +12,25 @@ export default function Hero() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const headline = heroData?.headline ?? 'American Overhead Doors';
+  const bodyText = heroData?.bodyText ?? '';
+  const ctaText = heroData?.ctaText ?? 'Services';
+  const imgSrc = heroData?.image
+    ? urlFor(heroData.image).auto('format').width(900).url()
+    : null;
+  const imgAlt = heroData?.image?.alt ?? 'American Overhead Doors';
+
   if (isMobile) {
     return (
       <section style={{ backgroundColor: '#FFFFFF', padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
-        {/* Image on top */}
-        <img
-          src={heroImg}
-          alt="American Overhead Doors"
-          style={{ width: '100%', maxWidth: '420px', borderRadius: '0.5rem', objectFit: 'cover' }}
-        />
+        {imgSrc && (
+          <img
+            src={imgSrc}
+            alt={imgAlt}
+            style={{ width: '100%', maxWidth: '420px', borderRadius: '0.5rem', objectFit: 'cover' }}
+          />
+        )}
 
-        {/* Title */}
         <h1 style={{
           fontFamily: 'Karantina, cursive',
           color: '#D8263E',
@@ -34,10 +42,9 @@ export default function Hero() {
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          American Overhead Doors
+          {headline}
         </h1>
 
-        {/* Body text */}
         <p style={{
           fontFamily: 'Alexandria, sans-serif',
           color: '#1a1a1a',
@@ -47,12 +54,9 @@ export default function Hero() {
           maxWidth: '380px',
           margin: 0,
         }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat,
-          elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor
-          auctor. Donec quis convallis lacus.
+          {bodyText}
         </p>
 
-        {/* Services button */}
         <a
           href="#services"
           onMouseEnter={() => setHovered(true)}
@@ -76,13 +80,12 @@ export default function Hero() {
             transition: 'transform 0.15s ease, opacity 0.1s ease',
           }}
         >
-          Services
+          {ctaText}
         </a>
       </section>
     );
   }
 
-  // Desktop layout
   return (
     <section style={{
       backgroundColor: '#FFFFFF',
@@ -93,7 +96,6 @@ export default function Hero() {
       gap: '4rem',
       minHeight: 'calc(100vh - 72px)',
     }}>
-      {/* Left: Text content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', maxWidth: '560px' }}>
         <h1 style={{
           fontFamily: 'Karantina, cursive',
@@ -106,7 +108,7 @@ export default function Hero() {
           textTransform: 'uppercase',
           margin: 0,
         }}>
-          American Overhead Doors
+          {headline}
         </h1>
 
         <p style={{
@@ -117,9 +119,7 @@ export default function Hero() {
           lineHeight: 1.8,
           margin: 0,
         }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat,
-          elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor
-          auctor. Donec quis convallis lacus.
+          {bodyText}
         </p>
 
         <a
@@ -145,17 +145,18 @@ export default function Hero() {
             transition: 'transform 0.15s ease, opacity 0.1s ease',
           }}
         >
-          Services
+          {ctaText}
         </a>
       </div>
 
-      {/* Right: Image */}
       <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-        <img
-          src={heroImg}
-          alt="American Overhead Doors"
-          style={{ width: '100%', borderRadius: '0.5rem', objectFit: 'cover', maxHeight: '520px' }}
-        />
+        {imgSrc && (
+          <img
+            src={imgSrc}
+            alt={imgAlt}
+            style={{ width: '100%', borderRadius: '0.5rem', objectFit: 'cover', maxHeight: '520px' }}
+          />
+        )}
       </div>
     </section>
   );
