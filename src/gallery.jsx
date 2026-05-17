@@ -11,8 +11,9 @@ export default function Gallery({ galleries = [] }) {
 
   // Reset animation state when images change
   useEffect(() => {
+    setPage(0);
     setAnimState('idle');
-  }, [images.length]);
+  }, [galleries.length]);
 
   const currentImages = galleries[page]?.images || [];
   const imageCount = currentImages.length;

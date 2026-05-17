@@ -56,13 +56,15 @@ function App() {
     }).catch(console.error)
 
     client.fetch(GALLERY_QUERY).then((data) => {
-      const images = (data?.images ?? [])
+      const flat = (data?.images ?? [])
         .filter((img) => img?.asset)
         .map((img) => ({
           src: urlFor(img).auto('format').width(800).url(),
           alt: img.alt ?? '',
         }))
-      setGalleryImages(images)
+      const pages = []
+      for (let i = 0; i < flat.length; i += 4) pages.push({ images: flat.slice(i, i + 4) })
+      setGalleryImages(pages)
     }).catch(console.error)
 
     client.fetch(REVIEW_QUERY).then((data) => {
@@ -81,7 +83,7 @@ function App() {
       <Hero heroData={heroData} />
       <AboutUs aboutData={aboutData} />
       <Services services={servicesData} />
-      <Gallery images={galleryImages} />
+      <Gallery galleries={galleryImages} />
       <Reviews reviews={reviews} />
       <Footer />
     </div>
