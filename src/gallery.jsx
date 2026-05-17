@@ -9,7 +9,7 @@ export default function Gallery({ galleries = [] }) {
   const revealedCount = useRef(0);
   const totalPages = Math.max(1, galleries.length);
 
-  // Reset page when galleries change
+  // Reset animation state when images change
   useEffect(() => {
     setPage(0);
     setAnimState('idle');

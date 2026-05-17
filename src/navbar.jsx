@@ -101,6 +101,7 @@ export default function Navbar() {
               display: 'inline-block',
               transform: hovered ? 'scale(1.1)' : 'scale(1)',
               opacity: clicked ? 0.6 : 1,
+              margin: scrolled ? '0' : '0.5rem 0',
               transition: 'transform 0.15s ease, opacity 0.1s ease, padding 0.3s ease, font-size 0.3s ease',
             }}
           >

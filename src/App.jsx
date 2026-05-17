@@ -8,58 +8,82 @@ import Reviews from './reviews'
 import Footer from './footer'
 import { client, urlFor } from './sanityClient'
 
-const GALLERY_QUERY = `*[_type == "gallery"] | order(order asc) {
-  _id,
-  title,
-  images[] {
-    alt,
-    asset,
-    hotspot,
-    crop
-  }
-}`;
+const HERO_QUERY = `*[_type == "hero" && _id == "hero"][0] {
+  headline,
+  bodyText,
+  ctaText,
+  image { asset, hotspot, crop, alt }
+}`
 
-const REVIEW_QUERY = `*[_type == "review"] | order(order asc) {
+const ABOUT_QUERY = `*[_type == "aboutUs" && _id == "aboutUs"][0] {
+  subheading,
+  bodyText,
+  image { asset, hotspot, crop, alt }
+}`
+
+const SERVICES_QUERY = `*[_type == "siteServices" && _id == "siteServices"][0] {
+  services[] {
+    title,
+    description,
+    image { asset, hotspot, crop, alt }
+  }
+}`
+
+const GALLERY_QUERY = `*[_type == "siteGallery" && _id == "siteGallery"][0] {
+  images[] { asset, hotspot, crop, alt }
+}`
+
+const REVIEW_QUERY = `*[_type == "review"] | order(orderRank) {
   _id,
   reviewText,
   reviewerName
-}`;
+}`
 
 function App() {
-  const [galleries, setGalleries] = useState([]);
-  const [reviews, setReviews] = useState([]);
+  const [heroData, setHeroData] = useState(null)
+  const [aboutData, setAboutData] = useState(null)
+  const [servicesData, setServicesData] = useState([])
+  const [galleryImages, setGalleryImages] = useState([])
+  const [reviews, setReviews] = useState([])
 
   useEffect(() => {
+    client.fetch(HERO_QUERY).then(setHeroData).catch(console.error)
+
+    client.fetch(ABOUT_QUERY).then(setAboutData).catch(console.error)
+
+    client.fetch(SERVICES_QUERY).then((data) => {
+      setServicesData(data?.services ?? [])
+    }).catch(console.error)
+
     client.fetch(GALLERY_QUERY).then((data) => {
-      console.log('Sanity galleries:', data);
-      const processed = data.map((gallery) => ({
-        title: gallery.title,
-        images: (gallery.images || []).map((img) => ({
+      const flat = (data?.images ?? [])
+        .filter((img) => img?.asset)
+        .map((img) => ({
           src: urlFor(img).auto('format').width(800).url(),
           alt: img.alt ?? '',
-        })),
-      }));
-      setGalleries(processed);
-    }).catch((err) => console.error('Sanity fetch error:', err));
+        }))
+      const pages = []
+      for (let i = 0; i < flat.length; i += 4) pages.push({ images: flat.slice(i, i + 4) })
+      setGalleryImages(pages)
+    }).catch(console.error)
 
     client.fetch(REVIEW_QUERY).then((data) => {
-      console.log('Sanity reviews:', data);
       setReviews(
-        data.map((r) => ({
+        (data ?? []).map((r) => ({
           text: r.reviewText,
           name: r.reviewerName,
         }))
-      );
-    }).catch((err) => console.error('Sanity review fetch error:', err));
-  }, []);
+      )
+    }).catch(console.error)
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <Hero />
-      <AboutUs />
-      <Services />
-      <Gallery galleries={galleries} />
+      <Hero heroData={heroData} />
+      <AboutUs aboutData={aboutData} />
+      <Services services={servicesData} />
+      <Gallery galleries={galleryImages} />
       <Reviews reviews={reviews} />
       <Footer />
     </div>

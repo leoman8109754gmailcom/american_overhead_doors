@@ -1,7 +1,7 @@
-import aboutImg from './assets/about_us.webp';
 import { useState, useEffect } from 'react';
+import { urlFor } from './sanityClient';
 
-export default function AboutUs() {
+export default function AboutUs({ aboutData }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -10,10 +10,16 @@ export default function AboutUs() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const subheading = aboutData?.subheading ?? '';
+  const bodyText = aboutData?.bodyText ?? '';
+  const imgSrc = aboutData?.image?.asset
+    ? urlFor(aboutData.image).auto('format').width(800).url()
+    : null;
+  const imgAlt = aboutData?.image?.alt ?? '45 Years in Business';
+
   if (isMobile) {
     return (
       <section id="about" style={{ backgroundColor: '#C9A87C', padding: '2.5rem 1.75rem' }}>
-        {/* Title */}
         <h2 style={{
           fontFamily: 'Karantina, cursive',
           color: '#002F49',
@@ -26,7 +32,6 @@ export default function AboutUs() {
           Who We Are
         </h2>
 
-        {/* Subheading */}
         <h3 style={{
           fontFamily: 'Alexandria, sans-serif',
           color: '#1a1a1a',
@@ -35,10 +40,9 @@ export default function AboutUs() {
           margin: '0 0 1rem 0',
           textAlign: 'center',
         }}>
-          45 Yrs In Business
+          {subheading}
         </h3>
 
-        {/* Body */}
         <p style={{
           fontFamily: 'Alexandria, sans-serif',
           color: '#D8263E',
@@ -47,23 +51,20 @@ export default function AboutUs() {
           margin: '0 0 1.75rem 0',
           textAlign: 'center',
         }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat,
-          elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor
-          auctor. Donec quis convallis lacus. Sed a laoreet massa. Donec id massa a augue
-          egestas posuere. Cras a sapien sed neque congue egestas in eget urna.
+          {bodyText}
         </p>
 
-        {/* Image */}
-        <img
-          src={aboutImg}
-          alt="45 Years in Business"
-          style={{ width: '100%', borderRadius: '0.5rem', objectFit: 'cover' }}
-        />
+        {imgSrc && (
+          <img
+            src={imgSrc}
+            alt={imgAlt}
+            style={{ width: '100%', borderRadius: '0.5rem', objectFit: 'cover' }}
+          />
+        )}
       </section>
     );
   }
 
-  // Desktop layout
   return (
     <section id="about" style={{
       backgroundColor: '#C9A87C',
@@ -74,7 +75,6 @@ export default function AboutUs() {
       justifyContent: 'center',
       boxSizing: 'border-box',
     }}>
-      {/* Title — flush to section left padding */}
       <h2 style={{
         fontFamily: 'Karantina, cursive',
         color: '#002F49',
@@ -87,10 +87,7 @@ export default function AboutUs() {
         Who We Are
       </h2>
 
-      {/* Two-column row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
-
-        {/* Left: text — very narrow, closer to center */}
         <div style={{ width: '250px', flexShrink: 0, marginLeft: '20%' }}>
           <h2 style={{
             fontFamily: 'Alexandria, sans-serif',
@@ -100,7 +97,7 @@ export default function AboutUs() {
             margin: '0 0 1rem 0',
             textAlign: 'center',
           }}>
-            45 Yrs In Business
+            {subheading}
           </h2>
           <h2 style={{
             fontFamily: 'Alexandria, sans-serif',
@@ -111,20 +108,18 @@ export default function AboutUs() {
             textAlign: 'center',
             margin: 0,
           }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat,
-            elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor
-            auctor. Donec quis convallis lacus. Sed a laoreet massa. Donec id massa a augue
-            egestas posuere. Cras a sapien sed neque congue egestas in eget urna.
+            {bodyText}
           </h2>
         </div>
 
-        {/* Right: image — in the right half of the page */}
         <div style={{ width: '40%', flexShrink: 0 }}>
-          <img
-            src={aboutImg}
-            alt="45 Years in Business"
-            style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', display: 'block', borderRadius: '0.5rem' }}
-          />
+          {imgSrc && (
+            <img
+              src={imgSrc}
+              alt={imgAlt}
+              style={{ width: '100%', aspectRatio: '4 / 3', objectFit: 'cover', display: 'block', borderRadius: '0.5rem' }}
+            />
+          )}
         </div>
       </div>
     </section>

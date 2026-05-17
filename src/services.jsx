@@ -1,17 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import serviceImg from './assets/service img.webp';
+import { urlFor } from './sanityClient';
 
 const NAV_H = 60;
-const services = [
-  { number: '1', title: 'COMERCIAL', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat, elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor auctor.' },
-  { number: '2', title: 'RESIDENTIAL', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat, elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor auctor.' },
-  { number: '3', title: 'INDUSTRIAL', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat, elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor auctor.' },
-  { number: '4', title: 'EMERGENCY', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lacus erat, elementum non viverra in, pellentesque et magna. Etiam scelerisque augue nec tempor auctor.' },
-];
-
 const dur = '0.6s';
 
-function Services() {
+function Services({ services = [] }) {
   const sectionRef = useRef(null);
   const panelRefs = useRef([]);
   const darkRefs = useRef([]);
@@ -49,7 +42,7 @@ function Services() {
       if (labelRefs.current[i]) labelRefs.current[i].style.opacity = 1 - openness;
       if (contentRefs.current[i]) contentRefs.current[i].style.opacity = openness;
     }
-  }, []);
+  }, [services.length]);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -64,6 +57,8 @@ function Services() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [isMobile, updatePanels]);
+
+  if (services.length === 0) return null;
 
   /* ── MOBILE ── */
   if (isMobile) {
@@ -91,81 +86,86 @@ function Services() {
           </div>
 
           <div className="flex flex-col flex-1 overflow-hidden" style={{ height: 'calc(100% - 60px)' }}>
-            {services.map((s, i) => (
-              <div
-                key={i}
-                ref={el => panelRefs.current[i] = el}
-                className="relative overflow-hidden border-b border-gray-600 last:border-b-0"
-                style={{
-                  flex: i === 0 ? 8 : 1,
-                  backgroundColor: '#0a1628',
-                  transition: 'flex-grow 60ms linear, opacity 60ms linear',
-                }}
-              >
+            {services.map((s, i) => {
+              const imgSrc = s.image?.asset ? urlFor(s.image).auto('format').width(800).url() : null;
+              return (
                 <div
-                  className="absolute inset-0"
+                  key={i}
+                  ref={el => panelRefs.current[i] = el}
+                  className="relative overflow-hidden border-b border-gray-600 last:border-b-0"
                   style={{
-                    backgroundImage: `url(${serviceImg})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-                <div ref={el => darkRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: i === 0 ? 0 : 1 }} />
-                <div ref={el => tintRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: i === 0 ? 1 : 0 }} />
-
-                <span
-                  className="absolute z-10"
-                  style={{
-                    fontFamily: "'Karantina', cursive",
-                    fontSize: '1.2rem',
-                    fontStyle: 'italic',
-                    color: '#c1272d',
-                    top: '50%',
-                    left: '0.5rem',
-                    transform: 'translateY(-50%)',
+                    flex: i === 0 ? 8 : 1,
+                    backgroundColor: '#0a1628',
+                    transition: 'flex-grow 60ms linear, opacity 60ms linear',
                   }}
                 >
-                  {s.number}
-                </span>
+                  {imgSrc && (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: `url(${imgSrc})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                      }}
+                    />
+                  )}
+                  <div ref={el => darkRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: i === 0 ? 0 : 1 }} />
+                  <div ref={el => tintRefs.current[i] = el} className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: i === 0 ? 1 : 0 }} />
 
-                <span
-                  ref={el => labelRefs.current[i] = el}
-                  className="absolute z-10 pointer-events-none"
-                  style={{
-                    fontFamily: "'Impact','Arial Black',sans-serif",
-                    fontSize: '0.85rem',
-                    letterSpacing: '0.15em',
-                    color: '#fff',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-30%,-50%)',
-                    opacity: i === 0 ? 0 : 1,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {s.title}
-                </span>
-
-                <div
-                  ref={el => contentRefs.current[i] = el}
-                  className="absolute inset-0 flex flex-col items-center justify-center px-6"
-                  style={{ opacity: i === 0 ? 1 : 0 }}
-                >
-                  <h3
-                    className="font-black tracking-wider text-2xl mb-4"
-                    style={{ fontFamily: "'Alexandria', sans-serif", color: '#0a1628' }}
+                  <span
+                    className="absolute z-10"
+                    style={{
+                      fontFamily: "'Karantina', cursive",
+                      fontSize: '1.2rem',
+                      fontStyle: 'italic',
+                      color: '#c1272d',
+                      top: '50%',
+                      left: '0.5rem',
+                      transform: 'translateY(-50%)',
+                    }}
                   >
-                    {s.title}
-                  </h3>
-                  <p
-                    className="text-center leading-relaxed italic max-w-md text-sm"
-                    style={{ color: '#1a2a40', fontFamily: "'Alexandria', sans-serif" }}
+                    {i + 1}
+                  </span>
+
+                  <span
+                    ref={el => labelRefs.current[i] = el}
+                    className="absolute z-10 pointer-events-none"
+                    style={{
+                      fontFamily: "'Impact','Arial Black',sans-serif",
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.15em',
+                      color: '#fff',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-30%,-50%)',
+                      opacity: i === 0 ? 0 : 1,
+                      whiteSpace: 'nowrap',
+                    }}
                   >
-                    {s.description}
-                  </p>
+                    {s.title?.toUpperCase()}
+                  </span>
+
+                  <div
+                    ref={el => contentRefs.current[i] = el}
+                    className="absolute inset-0 flex flex-col items-center justify-center px-6"
+                    style={{ opacity: i === 0 ? 1 : 0 }}
+                  >
+                    <h3
+                      className="font-black tracking-wider text-2xl mb-4"
+                      style={{ fontFamily: "'Alexandria', sans-serif", color: '#0a1628' }}
+                    >
+                      {s.title?.toUpperCase()}
+                    </h3>
+                    <p
+                      className="text-center leading-relaxed italic max-w-md text-sm"
+                      style={{ color: '#1a2a40', fontFamily: "'Alexandria', sans-serif" }}
+                    >
+                      {s.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -191,6 +191,7 @@ function Services() {
       >
         {services.map((s, i) => {
           const open = hoveredIndex === i;
+          const imgSrc = s.image?.asset ? urlFor(s.image).auto('format').width(900).url() : null;
           return (
             <div
               key={i}
@@ -202,7 +203,9 @@ function Services() {
               }}
               onMouseEnter={() => setHoveredIndex(i)}
             >
-              <img src={serviceImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              {imgSrc && (
+                <img src={imgSrc} alt={s.image?.alt ?? ''} className="absolute inset-0 w-full h-full object-cover" />
+              )}
 
               <div className="absolute inset-0" style={{ backgroundColor: '#0a1628', opacity: open ? 0 : 1, transition: `opacity ${dur} ease` }} />
               <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255,255,255,0.30)', opacity: open ? 1 : 0, transition: `opacity ${dur} ease` }} />
@@ -218,7 +221,7 @@ function Services() {
                   left: '1rem',
                 }}
               >
-                {s.number}
+                {i + 1}
               </span>
 
               <span
@@ -238,7 +241,7 @@ function Services() {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {s.title}
+                {s.title?.toUpperCase()}
               </span>
 
               <div
@@ -252,7 +255,7 @@ function Services() {
                   className="font-black tracking-wider text-3xl mb-6"
                   style={{ fontFamily: "'Alexandria', sans-serif", color: '#0a1628' }}
                 >
-                  {s.title}
+                  {s.title?.toUpperCase()}
                 </h3>
                 <p
                   className="text-center leading-relaxed italic max-w-md text-base"
